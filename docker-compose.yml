@@ -1,36 +1,44 @@
 version: '3' 
 
 services:
-    
+  # PHPでもいい
   web: 
     build: ./docker-config/php
+    container_name: app_php
     volumes:
-      - ./src/:/var/www/
-    working_dir: /var/www/
+      - ./laravel:/var/www/laravel
+    working_dir: /var/www/laravel
     depends_on:
       - mysql
 
   nginx:
     image: nginx
+    container_name: app_nginx
     build: ./docker-config/nginx
     ports:
-      - "81:80"
+      - "80:80"
     volumes:
-      - ./src/:/var/www
+      - .:/var/www
       - ./docker-config/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - web
 
   mysql:
     image: mysql:8.0
+    container_name: app_db
     ports:
-      - 3316:3306
+      - 3307:3306
     environment:
-      MYSQL_DATABASE: mainsys1
+      MYSQL_DATABASE: development
       MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: my_user
-      MYSQL_PASSWORD: my_user
+      # DB_HOST: mysql
+      # DB_PORT: 3307:3306
+      # DB_DATABASE: development
+      # DB_USERNAME: root
+      # DB_PASSWORD: root
+      MYSQL_USER: m_user
+      MYSQL_PASSWORD: m_user
       TZ: 'Asia/Tokyo'
       
     volumes:
@@ -43,10 +51,11 @@ services:
   mysql-volume:
     image: busybox
     volumes:
-      - ./docker-config/mysql:/var/lib/mysql
+      - ./docker-config/mysql/data:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: app_pma
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
@@ -55,6 +64,6 @@ services:
     links:
       - mysql
     ports:
-      - 8081:80
+      - 8080:80
     volumes:
       - /sessions
