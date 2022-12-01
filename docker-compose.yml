@@ -4,7 +4,7 @@ services:
   # PHPでもいい
   web: 
     build: ./docker-config/php
-    container_name: app_php
+    container_name: l7_php
     volumes:
       - ./laravel:/var/www/laravel
     working_dir: /var/www/laravel
@@ -13,7 +13,7 @@ services:
 
   nginx:
     image: nginx
-    container_name: app_nginx
+    container_name: l7_nginx
     build: ./docker-config/nginx
     ports:
       - "80:80"
@@ -25,7 +25,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: app_db
+    container_name: l7_db
     ports:
       - 3307:3306
     environment:
@@ -55,7 +55,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: app_pma
+    container_name: l7_pma
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
